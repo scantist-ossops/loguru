@@ -1,6 +1,5 @@
 import re
 import sys
-import time
 
 import pytest
 
@@ -93,7 +92,7 @@ def test_unprintable_record(writer, capsys):
 def test_broken_sink_message(capsys, enqueue):
     logger.add(broken_sink, catch=True, enqueue=enqueue)
     logger.debug("Oops")
-    time.sleep(0.1)
+    logger.complete()
 
     out, err = capsys.readouterr()
     lines = err.strip().splitlines()
@@ -121,7 +120,7 @@ def test_broken_sink_caught_keep_working(enqueue):
     logger.info("NOK")
     logger.info("B")
 
-    time.sleep(0.1)
+    logger.complete()
     assert output == "A\nB\n"
 
 
@@ -138,6 +137,6 @@ def test_broken_sink_not_caught_enqueue():
     with default_threading_excepthook():
         logger.info("A")
         logger.info("B")
-        time.sleep(0.1)
+        logger.complete()
 
     assert called == 2
